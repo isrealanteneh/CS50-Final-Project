@@ -1,0 +1,6 @@
+roll no , student name, date , Attendance
+1	, israel
+2	, melkamu
+3	, berketAb
+4	, kaleab
+5	, Anteneh
