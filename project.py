@@ -65,7 +65,9 @@ def addDate(studentList):
                 if i[2] == "Date": i[2] = 'Date'
                 else: i[2] = currentDate
         return studentList
-       
+
+
+
 def registerAttendanceInformation():
         data = datetime.now()
         currentDate = data.strftime('%d-%m-%y')  
@@ -74,7 +76,8 @@ def registerAttendanceInformation():
                 files  = os.listdir(studentListFolderPath)
                 for i in range(len(files)):
                         print(f"{i+1}, {files[i]}")
-                openFile = input("\n Enter students file name with it's extenstion to Track Attendance: ")
+                studentFile = input("\n Enter students file name to Track Attendance: ")
+                openFile = "f{studentFile}.csv"
                 if openFile in files:
                        choosenStudentsFile = chooseFile(openFile)
                        datedList = addDate(choosenStudentsFile)
@@ -82,12 +85,13 @@ def registerAttendanceInformation():
 
         print('\n ====== Input \'P\' for present \'a\' for absent \'e\' for excuse other inputs are not valid ====== ')
         print(f"Today it is {currentDate} ")
-
+       
         for i in range(len(datedList)):
                 if i == 0: pass
                 else:
                         attnedance = input(f"{datedList[i][0]}, {datedList[i][1]}: ")
                         while (True):
+                                # if the input is only p, e, a it can be valid input
                                 if (attnedance.lower() in ['p','a','e']):
                                         attendanceData.append(attnedance)
                                         break
@@ -111,13 +115,15 @@ def appendAttendanceValue(attendanceValue,studentList):
                 fileName = checkFileName(attendanceFolder)
                 print(fileName)
                 return studentList, fileName
-              
+
+# check the file name user give to attendance file if it is duplicated it is not valid and reprompt the user 
 def checkFileName(folderPath):
          fileName = input("Enter file name: ")
          if os.path.exists(folderPath):
                         files = os.listdir(folderPath)
                         fileNames = []
                         for file in files:
+                                # append file name only with out its extention to fileNames list
                                 fileNames.append(file.split(".")[0])
                         
                         while(True):
@@ -126,34 +132,67 @@ def checkFileName(folderPath):
                                 else:
                                         fileName = input("file name already exists please enter new name: ").strip()
 
-
+# this function give us the list of privious Attendace file 
 def previousAttendance():
         print("List of previous attendance")
         if os.path.exists(attendanceFolder):
                 files  = os.listdir(attendanceFolder)
                 for i in range(len(files)):
                         print(f"{i+1}, {files[i]}")
-                openFile = input("Enter file name with it's extenstion to view: ")
+                fileName = input("Enter file name to view: ")
+                ViewFile = f"{fileName}.csv"
                 viewList = []
                 for file in files:
-                        if openFile == file:
-                                with open(f'./attendanceFile/{openFile}', 'r') as readFile:
-                                        readAttendanceData = csv.reader(readFile)
-                                        for line in readAttendanceData:
-                                                viewList.append(line)
-                                        
-                                        table = tabulate(viewList,headers='firstrow', tablefmt='grid')
-                                        print(table)
+                        if ViewFile == file:
+                                # open the neede file in the attendance folder and open the file to view
+                                try:
+                                        with open(f'{attendanceFolder}/{ViewFile}', 'r') as readFile:
+                                                readAttendanceData = csv.reader(readFile)
+                                                for line in readAttendanceData:
+                                                        # if the file exist append it in to viewList list
+                                                        viewList.append(line)
+                                                table = tabulate(viewList,headers='firstrow', tablefmt='grid')
+                                                print(table)
+                                except FileNotFoundError:  print("File not found")
                 if viewList ==  []:
                                 print(" No such file name")
-                                
 
+# delete the file in the that is the return of deleteChoose function
+def deleteFile():
+        deleteFolder = deleteChoose()
+        try:
+                studentFile = os.listdir(deleteFolder)
+                roll = 1
+                for file in studentFile:
+                        print(f"{roll}, {file}")
+                        roll += 1
+                fileName = input("enter file name only to delete: ")
+                file = f"{fileName}.csv"
+                if file in studentFile:
+                        # os.remove(file)
+                        print("file deleted")
+                else: print(f"{file} does not exist")
+        except Exception :print(" No such file or directory")                                
+
+
+# prompt the user to enter the folder wether it is students list file or attendance file and return folder path to deleteFile function 
+def deleteChoose():
+        print("Enter 1 to delete students list file and 2 to delete attendance file ")
+        deleteChoise = input(": ")
+        if deleteChoise == "1":
+                return studentListFolderPath
+        elif deleteChoise == "2":
+                return attendanceFolder
+        else: return "./"
+                
+
+                                          
 def menu():
         print("\n ======= Welcome to student attendance tracking system ====== \n")
         print("1, Add student list ")
-        # print("2, check student list")
         print("2, Start tracking ")
         print("3, Previous attendance ")
+        print("4, Delete file \n")
         userChoise = input("Enter choise: ")
         if userChoise == "1":
                 try:
@@ -164,6 +203,9 @@ def menu():
                 registerAttendanceInformation()                              
         elif userChoise == "3":
                 previousAttendance()
+        elif userChoise == "4":
+                deleteFile()
+
         else: print("Invalid Choice ")
         wantToExit = input("To continue or exit enter (Y/N): ")
         return wantToExit.lower().strip()

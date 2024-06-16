@@ -1,7 +1,7 @@
 import project
 
 def test_registerStudents():
-    assert project.registerStudents("./studentLists") == "Folder path does not exist"
+    assert project.registerStudents("./studentList") == "Folder path does not exist"
 
 
 def main():
