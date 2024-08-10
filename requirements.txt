@@ -1,0 +1,14 @@
+# pip-installable libraries that your project
+sys
+tabulate
+pandas
+os
+datetime
+pytest
+black 
+io
+csv 
+tabulate
+unittest
+patch
+MagicMock
