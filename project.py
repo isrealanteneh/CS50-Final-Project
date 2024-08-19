@@ -130,8 +130,8 @@ def appendAttendanceValue(attendanceValue, studentList):
                 else:
                         studentList[i][3] = attendanceValue[i]
                 table = tabulate(studentList, headers="firstrow", tablefmt="grid")
-                print(table)
         except IndexError: print("The selected student list file is empty.")
+    print(table)
     wantToSave = input("Would you like to save this data? (Y/N): ") 
 
     if wantToSave.lower() == "y":
@@ -192,7 +192,7 @@ def deleteFile():
         try:
                 studentFile = os.listdir(deleteFolder)
                 roll = 1
-                print(studentFile)
+              
                 for file in studentFile:
                         print(f"{roll}, {file}")
                         roll += 1
